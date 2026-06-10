@@ -12,7 +12,7 @@ public class MenuManager : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(nameInput.text))
         {
-            SceneManager.LoadScene("Sc2_GettingTrashScene");
+            SceneManager.LoadScene("Sc2_GettingTrash");
         }
         else
         {

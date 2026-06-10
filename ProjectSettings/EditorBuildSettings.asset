@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Sc1_MenuGame.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
+    path: Assets/Scenes/ScD_Loading.unity
+    guid: 13a43aa93d3836d4391f43a910c711c7
+  - enabled: 1
     path: Assets/Scenes/Sc2_GettingTrash.unity
     guid: e1c5456db8b741548a7668ca7f7dfa4f
   - enabled: 1

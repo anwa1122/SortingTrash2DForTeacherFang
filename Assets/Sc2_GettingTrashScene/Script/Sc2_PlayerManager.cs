@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Sc2_PlayerMovement : MonoBehaviour
+public class Sc2_PlayerManager : MonoBehaviour
 {
     [Header("Player-Setting")]
     public float moveSpeed = 5f;
@@ -11,7 +11,7 @@ public class Sc2_PlayerMovement : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
     private bool isGrounded;
-
+    private bool canDoubleJump;
     // เก็บขยะ
     private GameObject currentTrash;
 
@@ -34,16 +34,27 @@ public class Sc2_PlayerMovement : MonoBehaviour
 
         moveInput.x = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Jumped");
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if (isGrounded)
+            {
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                canDoubleJump = true;
+            }
+            else if (!isGrounded && canDoubleJump)
+            {
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                canDoubleJump = false;
+            }
+
         }
 
         // กด E เพื่อเก็บขยะ
         if (currentTrash != null && Input.GetKeyDown(KeyCode.E))
         {
+            Sc2_InventoryManager.Instance.AddItem(currentTrash.GetComponent<Sc2_TrashObject>().data);
             Destroy(currentTrash);
+
         }
     }
 
@@ -57,6 +68,7 @@ public class Sc2_PlayerMovement : MonoBehaviour
         if (other.CompareTag("Trash"))
         {
             currentTrash = other.gameObject;
+            //Debug.Log("Found Trash");
         }
     }
 

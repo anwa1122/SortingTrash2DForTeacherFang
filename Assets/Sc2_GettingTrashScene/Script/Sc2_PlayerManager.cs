@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Sc2_PlayerManager : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class Sc2_PlayerManager : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     private bool isGrounded;
     private bool canDoubleJump;
+
+
+    private bool canTeleport;
     // เก็บขยะ
     private GameObject currentTrash;
 
@@ -56,6 +60,11 @@ public class Sc2_PlayerManager : MonoBehaviour
             Destroy(currentTrash);
 
         }
+
+        if (canTeleport && Input.GetKeyDown(KeyCode.E))
+        {
+            SceneManager.LoadScene("Sc3_SortingTrash");
+        }
     }
 
     private void FixedUpdate()
@@ -70,6 +79,10 @@ public class Sc2_PlayerManager : MonoBehaviour
             currentTrash = other.gameObject;
             //Debug.Log("Found Trash");
         }
+        if (other.CompareTag("Teleporter"))
+        {
+            canTeleport = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -77,6 +90,10 @@ public class Sc2_PlayerManager : MonoBehaviour
         if (other.CompareTag("Trash"))
         {
             currentTrash = null;
+        }
+        if (other.CompareTag("Teleporter"))
+        {
+            canTeleport = false;
         }
     }
 }

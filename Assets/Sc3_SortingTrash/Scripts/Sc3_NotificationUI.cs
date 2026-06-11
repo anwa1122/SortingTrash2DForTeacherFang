@@ -14,10 +14,12 @@ public class Sc3_NotificationUI : MonoBehaviour
     public float slideOffset = 50f;
     public float displayDuration = 2f;
 
-    [Header("--- 2. ระบบหน้าต่างสรุปผล (Zoom Scale) ---")]
+    [Header("--- 2. ระบบหน้าต่างสรุปผล (Zoom & Fade In) ---")]
     [Tooltip("ลาก RectTransform ของหน้าต่างสรุปผลสี่เหลี่ยมผืนผ้าแนวตั้งมาใส่ช่องนี้")]
     public RectTransform summaryWindow;
-    [Tooltip("ความเร็วในการซูมขยายใหญ่")]
+    [Tooltip("ลาก CanvasGroup ของหน้าต่างสรุปผลมาใส่ช่องนี้ (เอาไว้ทำล่องหนตอนเริ่ม)")]
+    public CanvasGroup summaryCanvasGroup;
+    [Tooltip("ความเร็วในการซูมขยายใหญ่และการเฟดสว่าง")]
     public float zoomSpeed = 8f;
     [Tooltip("ขนาดปลายทางที่อยากให้ขยายจนสุด (ปกติคือ 1, 1, 1)")]
     public Vector3 targetScale = Vector3.one;
@@ -60,10 +62,16 @@ public class Sc3_NotificationUI : MonoBehaviour
             }
         }
 
-        // 🔥 ตั้งค่าหน้าต่างสรุปผลให้หดเหลือ 0 รอไว้ตั้งแต่เริ่มเกม
+        // 🔥 ตั้งค่าหน้าต่างสรุปผลให้หดเหลือ 0 และ ล่องหน (Alpha = 0) ทันทีตอนเริ่มเกม
         if (summaryWindow != null)
         {
             summaryWindow.localScale = Vector3.zero;
+        }
+
+        if (summaryCanvasGroup != null)
+        {
+            summaryCanvasGroup.alpha = 0f;
+            summaryCanvasGroup.blocksRaycasts = false; // ป้องกันไม่ให้เมาส์ไปกดโดนปุ่มข้างในตอนที่ยังมองไม่เห็น
         }
     }
 
@@ -117,14 +125,13 @@ public class Sc3_NotificationUI : MonoBehaviour
     }
 
     // ==========================================
-    // [หมวดที่ 2] ระบบหน้าต่างสรุปผล (เพิ่มใหม่ตามสั่ง)
+    // [หมวดที่ 2] ระบบหน้าต่างสรุปผล (ซูมพร้อมเฟดเข้า)
     // ==========================================
-    // วิธีเรียกใช้งานจากโค้ดอื่นเมื่อจบเกม: Sc3_NotificationUI.Instance.ShowSummaryWindow();
     public void ShowSummaryWindow()
     {
-        if (summaryWindow == null)
+        if (summaryWindow == null || summaryCanvasGroup == null)
         {
-            Debug.LogError("[Summary UI] กรุณาลากหน้าต่างสรุปผลมาใส่ในช่อง Summary Window ก่อนสั่งทำงานครับ!");
+            Debug.LogError("[Summary UI] กรุณาลากหน้าต่างสรุปผลและ CanvasGroup มาใส่ให้ครบก่อนสั่งทำงานครับ!");
             return;
         }
 
@@ -136,21 +143,29 @@ public class Sc3_NotificationUI : MonoBehaviour
         summaryRoutine = StartCoroutine(ZoomInSummarySequence());
     }
 
-    // IEnumerator สำหรับซูมขยายหน้าต่างสรุปผลจากกลางจอ
+    // IEnumerator สำหรับซูมขยายและเฟดหน้าต่างสรุปผลจากกลางจอ
     private IEnumerator ZoomInSummarySequence()
     {
-        // รีเซ็ตให้หดเหลือ 0 ก่อนเริ่มขยาย
+        // รีเซ็ตค่าเริ่มต้นก่อนเริ่มอนิเมชันเพื่อความชัวร์
         summaryWindow.localScale = Vector3.zero;
+        summaryCanvasGroup.alpha = 0f;
+        summaryCanvasGroup.blocksRaycasts = true; // เปิดให้สามารถกดปุ่มต่างๆ บนหน้าต่างสรุปผลได้แล้ว
 
-        // ค่อยๆ ขยายขนาดจนกว่าจะใกล้เคียงเป้าหมายที่กำหนด (targetScale)
-        while (Vector3.Distance(summaryWindow.localScale, targetScale) > 0.001f)
+        // ค่อยๆ ขยายขนาดและเพิ่มความสว่างไปพร้อมๆ กัน
+        while (Vector3.Distance(summaryWindow.localScale, targetScale) > 0.001f || summaryCanvasGroup.alpha < 0.99f)
         {
+            // ซูมขนาด
             summaryWindow.localScale = Vector3.Lerp(summaryWindow.localScale, targetScale, Time.deltaTime * zoomSpeed);
+
+            // เฟดความสว่าง (ใช้ความเร็ว zoomSpeed ร่วมกันเพื่อให้สว่างเสร็จพร้อมกับตอนขยายสุดพอดี)
+            summaryCanvasGroup.alpha = Mathf.Lerp(summaryCanvasGroup.alpha, 1f, Time.deltaTime * zoomSpeed);
+
             yield return null;
         }
 
-        // ล็อกค่าสุดท้ายให้เป๊ะ
+        // ล็อกค่าสุดท้ายให้เป๊ะ 100%
         summaryWindow.localScale = targetScale;
-        Debug.Log("[Summary UI] หน้าต่างสรุปผลขยายใหญ่เรียบร้อยแล้ว!");
+        summaryCanvasGroup.alpha = 1f;
+        Debug.Log("[Summary UI] หน้าต่างสรุปผลขยายใหญ่และเฟดสว่างเรียบร้อยแล้ว!");
     }
 }

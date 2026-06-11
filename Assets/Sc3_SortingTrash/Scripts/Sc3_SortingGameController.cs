@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Sc3_SortingGameController : MonoBehaviour
 {
@@ -97,7 +98,19 @@ public class Sc3_SortingGameController : MonoBehaviour
 
         Debug.Log($"--- สรุปผลเกมแยกขยะ --- \nคะแนนรวมทั้งหมด: {finalScore} แต้ม | แยกถูก: {correctCount} ชิ้น | แยกผิด: {wrongCount} ชิ้น");
 
+        // สั่งพิมพ์ข้อความ Well Done ทันที
         Sc3_NotificationUI.Instance.ShowNotice("Well Done!!!");
+
+        // 🔥 แทนที่จะสั่งเปิด Summary เลยตรงๆ ให้ส่งไปทำงานใน Coroutine หน่วงเวลาแทน
+        StartCoroutine(WaitAndShowSummary());
         // ตรงนี้สามารถใส่โค้ดเปิดหน้าต่าง UI สรุปผล (Victory Screen) หรือเปลี่ยนซีนถัดไปได้เลยครับ
+    }
+    private IEnumerator WaitAndShowSummary()
+    {
+        // ⏳ สั่งให้หยุดรอตรงนี้เป็นเวลา 1 วินาที
+        yield return new WaitForSeconds(1f);
+
+        // เมื่อครบ 1 วินาทีแล้ว ค่อยสั่งให้หน้าต่างสรุปผลเด้งซูมขึ้นมา!
+        Sc3_SummaryManager.Instance.UpdateAndShowSummary(finalScore);
     }
 }

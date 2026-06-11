@@ -6,41 +6,43 @@ using TMPro;
 
 public class LoadingScreen : MonoBehaviour
 {
-    public Slider progressBar;
     public TMP_Text progressText;
+    public Image heartImage;        // ← แทน Slider
+    public Sprite[] heartSprites;   // ← ใส่รูป 11 รูป (0%-100%)
 
     void Start()
     {
         StartCoroutine(LoadAsync("Sc2_GettingTrash"));
     }
 
-IEnumerator LoadAsync(string sceneName)
-{
-    AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-    operation.allowSceneActivation = false;
-
-    float fakeProgress = 0f;        // ← เพิ่มตัวแปรนี้
-    float minLoadTime = 3f;         // ← กำหนดเวลาขั้นต่ำ (วินาที)
-    float elapsed = 0f;             // ← จับเวลาที่ผ่านไป
-
-    while (!operation.isDone)
+    IEnumerator LoadAsync(string sceneName)
     {
-        elapsed += Time.deltaTime;
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        operation.allowSceneActivation = false;
 
-        // ค่อยๆ เพิ่ม progress ตามเวลา
-        float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
-        fakeProgress = Mathf.MoveTowards(fakeProgress, realProgress, Time.deltaTime / minLoadTime);
+        float fakeProgress = 0f;
+        float minLoadTime = 3f;
+        float elapsed = 0f;
 
-        progressBar.value = fakeProgress;
-        progressText.text = "Loading... " + (int)(fakeProgress * 100) + "%";
-
-        // เปิด Scene เมื่อครบเวลาขั้นต่ำ และโหลดเสร็จแล้ว
-        if (operation.progress >= 0.9f && elapsed >= minLoadTime)
+        while (!operation.isDone)
         {
-            operation.allowSceneActivation = true;
-        }
+            elapsed += Time.deltaTime;
 
-        yield return null;
+            float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
+            fakeProgress = Mathf.MoveTowards(fakeProgress, realProgress, Time.deltaTime / minLoadTime);
+
+            // เปลี่ยนรูปหัวใจตาม %
+            int index = Mathf.Clamp(Mathf.RoundToInt(fakeProgress * 10), 0, 10);
+            heartImage.sprite = heartSprites[index];
+
+            progressText.text = "Loading... " + (int)(fakeProgress * 100) + "%";
+
+            if (operation.progress >= 0.9f && elapsed >= minLoadTime)
+            {
+                operation.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
     }
-}
 }

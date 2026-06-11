@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
   m_Name: Banana
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
-  trashName: 
-  trashType: 0
-  score: 0
-  icon: {fileID: 0}
-  spawnWeight: 100
+  trashName: Banana
+  trashType: 2
+  score: 20
+  icon: {fileID: -3608795927983523270, guid: b493d22643ad13f47b678263f94d618a, type: 3}
+  spawnChancePercentage: 25

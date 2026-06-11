@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
   m_Name: GlassBottle
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
-  trashName: 
-  trashType: 0
-  score: 0
-  icon: {fileID: 0}
-  spawnWeight: 100
+  trashName: GlassBottle
+  trashType: 1
+  score: 15
+  icon: {fileID: -1025433049423861475, guid: 646663cd5f83f86459303704b66c8098, type: 3}
+  spawnChancePercentage: 53.7

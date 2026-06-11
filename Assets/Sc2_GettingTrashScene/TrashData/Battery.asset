@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
   m_Name: Battery
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
-  trashName: 
-  trashType: 0
-  score: 0
-  icon: {fileID: 0}
-  spawnWeight: 100
+  trashName: Battery
+  trashType: 3
+  score: 30
+  icon: {fileID: 1654692466164756085, guid: a7477ad7801afa24b8cbb97ca5be041b, type: 3}
+  spawnChancePercentage: 25

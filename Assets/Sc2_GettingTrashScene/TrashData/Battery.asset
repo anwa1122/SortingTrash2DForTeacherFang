@@ -15,5 +15,5 @@ MonoBehaviour:
   trashName: Battery
   trashType: 3
   score: 30
-  icon: {fileID: 1654692466164756085, guid: a7477ad7801afa24b8cbb97ca5be041b, type: 3}
+  icon: {fileID: 2599969905456701152, guid: 7d9b7fc873438aa499bdad8915d95292, type: 3}
   spawnChancePercentage: 25

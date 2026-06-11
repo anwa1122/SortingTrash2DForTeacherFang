@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
-  m_Name: GlassBottle
-  m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
-  trashName: GlassBottle
-  trashType: 1
-  score: 15
-  icon: {fileID: -1025433049423861475, guid: 646663cd5f83f86459303704b66c8098, type: 3}
+  m_Name: bottle
+  m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashItem
+  trashName: bottle
+  trashType: 0
+  score: 10
+  icon: {fileID: -2174827668884051896, guid: 55dcf9c7eae6a4e499b51267058d1668, type: 3}
   spawnChancePercentage: 53.7

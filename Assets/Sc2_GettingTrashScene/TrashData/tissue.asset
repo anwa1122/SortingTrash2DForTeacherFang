@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
-  m_Name: PlasticBottle
-  m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashItem
-  trashName: PlasticBottle
-  trashType: 0
-  score: 10
-  icon: {fileID: -6977131504767820746, guid: 8e5f71240930b22469c34179c1855f2e, type: 3}
+  m_Name: tissue
+  m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
+  trashName: tissue
+  trashType: 1
+  score: 15
+  icon: {fileID: 9081072835608172839, guid: d800f59edfd7d6a4eadee446dc190e40, type: 3}
   spawnChancePercentage: 53.7

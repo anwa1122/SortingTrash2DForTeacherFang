@@ -4,12 +4,13 @@ using UnityEngine.SceneManagement;
 public class Sc2_PlayerManager : MonoBehaviour
 {
     [Header("Player-Setting")]
-    public float moveSpeed = 8f;            // 💡 แนะนำปรับเพิ่มความเร็วเดิน (เดิม 5f อาจจะช้าไป)
-    public float jumpForce = 12f;           // 💡 ปรับเพิ่มแรงส่งกระโดดให้รับกับแรงโน้มถ่วงใหม่
+    public float moveSpeed = 8f;
+    public float jumpForce = 12f;
+    public bool canMove = true;
 
     [Header("Jump Physics Tweaks (เพิ่มความแน่น)")]
-    public float fallMultiplier = 2.5f;     // 🚀 แรงดึงลงตอนตก (ยิ่งมากยิ่งตกเร็ว สะใจ)
-    public float lowJumpMultiplier = 2f;    // 🚀 แรงดึงลงตอนปล่อยปุ่มกระโดดเร็ว (ช่วยให้กดกระโดดสั้น-ยาวได้)
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
 
     [Header("Ground-Check-Setting")]
     [SerializeField] private Transform groundCheck;
@@ -32,6 +33,19 @@ public class Sc2_PlayerManager : MonoBehaviour
 
     private void Update()
     {
+        // 🔒 [สเต็ปที่ 1: ดัก Update] ถ้ากำลังนับถอยหลังเปิดเกม ห้ามรับปุ่มกดใดๆ และเบรกแกน X ทันที ส่วนแกน Y ปล่อยให้ร่วงตามปกติ
+        if (Sc2_CountdownTimer.IsIntroCounting)
+        {
+            moveInput = Vector2.zero; // ล้างค่าปุ่มกดทิ้งทั้งหมดเป็น 0
+
+            if (rb != null)
+            {
+                // 🔥 บังคับล็อกเฉพาะแกน X เป็น 0 ส่วนแกน Y ใช้ค่าเดิมเพื่อให้ตัวละครร่วงลงพื้นตามฟิสิกส์ได้ครับ
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            return; // หักห้ามใจไม่ให้รันลอจิกรับปุ่มกดกระโดดหรือกด E ด้านล่าง
+        }
+
         // ตรวจสอบพื้นตามปกติ
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
@@ -43,7 +57,7 @@ public class Sc2_PlayerManager : MonoBehaviour
         {
             if (isGrounded)
             {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); // 💡 เปลี่ยนมาเซ็ตความเร็วแกน Y ตรงๆ จะเสถียรกว่า AddForce
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 canDoubleJump = true;
             }
             else if (!isGrounded && canDoubleJump)
@@ -53,7 +67,7 @@ public class Sc2_PlayerManager : MonoBehaviour
             }
         }
 
-        // --- 🎒 ระบบกด E (แยกเงื่อนไขเพื่อไม่ให้บั๊กซ้อนกัน) ---
+        // --- 🎒 ระบบกด E ---
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (currentTrash != null)
@@ -63,7 +77,6 @@ public class Sc2_PlayerManager : MonoBehaviour
             }
             else if (canTeleport)
             {
-                // 🌟 ปรับไปวาร์ปแบบผ่านคัตซีนหัวใจโหลดผ่าน LoadingScreen ตัวกลางที่เราเพิ่งแก้กันเมื่อกี้ได้เลย!
                 LoadingScreen.LoadSceneWithLoadingScreen("Sc3_SortingTrash");
             }
         }
@@ -71,23 +84,33 @@ public class Sc2_PlayerManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 🏃‍♂️ ระบบคุมความเร็วเดิน
+        // 🔒 [สเต็ปที่ 2: ดัก FixedUpdate] บังคับล็อกขาในระบบฟิสิกส์ด้วย เพื่อตัดปัญหาแรงเฉื่อยไถลซ้ายขวา
+        if (Sc2_CountdownTimer.IsIntroCounting)
+        {
+            if (rb != null)
+            {
+                // บังคับล็อก X สนิทกริบ ส่วน Y ปล่อยร่วงอิสระ
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            return; // สั่งหยุดทำงานลอจิกเคลื่อนที่ด้านล่างทันที
+        }
+
+        // 🏃‍♂️ ระบบคุมความเร็วเดินปกติ (ทำงานเฉพาะตอนเกมเริ่มแล้ว)
         if (moveInput.x != 0)
         {
             rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
         }
         else
         {
-            // 🛑 ถ้าปล่อยปุ่มเดิน ให้หักความเร็ว X เป็น 0 ทันที ตัวละครจะเบรกกริบ ไม่ลอยไถล
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         }
 
-        // 📐 ลอจิกฟิสิกส์คุมแรงโน้มถ่วงอัจฉริยะ (แก้ปัญหากระโดดลอยเคว้ง)
-        if (rb.linearVelocity.y < 0) // ตอนกำลังร่วงลงมา
+        // 📐 ลอจิกฟิสิกส์คุมแรงโน้มถ่วงอัจฉริยะ (ยังคงรันได้ปกติแม้ตอนล็อกขา ทำให้ร่วงลงพื้นได้นุ่มนวลมาก)
+        if (rb.linearVelocity.y < 0)
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
         }
-        else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space)) // แตะปุ่ม Spacebar เบาๆ (Low Jump)
+        else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space))
         {
             rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
         }

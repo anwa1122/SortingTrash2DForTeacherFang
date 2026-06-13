@@ -2,32 +2,34 @@ using UnityEngine;
 
 public class Sc2_UINotifWiggle : MonoBehaviour
 {
-    [Header("--- UI Slide Up Settings (เอฟเฟกต์เลื่อนเด้งขึ้น) ---")]
-    [Tooltip("ความเร็วในการเลื่อนขึ้นมาจากข้างล่าง ยิ่งมากยิ่งเด้งขึ้นมาเร็ว")]
-    public float slideSpeed = 5f;
+    [Header("--- UI Slam Zoom Settings (เอฟเฟกต์โยนทุบกระแทกหน้าจอ) ---")]
+    public float startZoomScale = 3.5f;
+    public float slamSpeed = 8f;
+    public float startSlamAngle = -25f;
 
-    [Tooltip("ระยะเริ่มต้นที่จะให้แอบไปซ่อนใต้ตำแหน่งจริง (หน่วยเป็นพิกเซลบนจอ เช่น 500 หรือ 800)")]
+    [Header("--- UI Slide Up Settings (เฉพาะข้อความภารกิจตอนเปิดตัวเริ่มต้น) ---")]
+    public float slideSpeed = 5f;
     public float startYOffset = 600f;
 
-    [Header("--- UI Wiggle Settings (เอียงซ้ายขวา) ---")]
-    [Tooltip("ความเร็วในการเอียงส่ายไปมา ยิ่งน้อยยิ่งช้าและนุ่มนวล")]
+    [Header("--- UI Wiggle Settings (ลูปส่ายชิลๆ ประจำบ้าน) ---")]
     public float rotateSpeed = 2f;
-
-    [Tooltip("องศาที่ยอมให้เอียงไปขวาและซ้ายมากที่สุด (แนะนำ 5 - 10 องศากำลังน่ารัก)")]
     public float maxRotateAngle = 7f;
 
-    [Header("--- UI Pulse Settings (ยืดหดหายใจ) ---")]
-    [Tooltip("ถ้าอยากให้ข้อความมีการขยายหดเบาๆ เหมือนหายใจได้ ให้ติ๊กถูกอันนี้ครับ")]
+    [Header("--- UI Pulse Settings (ลูปหายใจยืดหด) ---")]
     public bool usePulseEffect = true;
     public float pulseSpeed = 1.5f;
-    public float pulseAmount = 0.05f; // ขยายออกเพิ่มจากเดิม 5%
+    public float pulseAmount = 0.05f;
 
     private RectTransform rectTransform;
     private Vector3 initialScale;
-    private Vector2 targetAnchoredPosition; // เก็บพิกัดจริงที่เราจัดไว้ในหน้าจอ UI
-    private Vector2 startAnchoredPosition;  // พิกัดใต้จอสำหรับจุดเริ่มต้น
+    private Vector2 targetAnchoredPosition;
+    private Vector2 startAnchoredPosition;
     private float randomOffset;
-    private float slideProgress = 0f;
+
+    private float slideProgress = 1f;
+    private float slamProgress = 1f;
+    private bool isSlamming = false;
+    private bool isSliding = false;
 
     void Awake()
     {
@@ -36,28 +38,39 @@ public class Sc2_UINotifWiggle : MonoBehaviour
 
         if (rectTransform != null)
         {
-            // บันทึกตำแหน่งที่แท้จริงที่คุณตั้งใจจัดวางไว้ในหน้าจอ Canvas (จุดปลายทาง)
             targetAnchoredPosition = rectTransform.anchoredPosition;
-
-            // คำนวณจุดเกิดเริ่มต้น โดยการหักแกน Y ลงไปข้างล่างตามค่า Offset
             startAnchoredPosition = new Vector2(targetAnchoredPosition.x, targetAnchoredPosition.y - startYOffset);
         }
-
-        // สุ่มจังหวะเริ่มต้นไม่ให้ซ้ำใคร
         randomOffset = Random.Range(0f, 100f);
     }
 
-    void OnEnable()
+    // 🚀 ลบคำสั่ง OnEnable เจ้าปัญหาออกถาวร เพื่อให้รันได้ราบรื่นไม่ตีกันเองตามคิวงาน
+
+    public void StartSlideUpEffect()
     {
-        slideProgress = 0f; // รีเซ็ตความคืบหน้าการเลื่อนใหม่ทุกครั้งที่เด้งขึ้นมา
+        isSlamming = false;
+        isSliding = true;
+        slideProgress = 0f;
 
         if (rectTransform != null)
         {
-            // วาร์ปป้ายเตือนลงไปซ่อนไว้ใต้จอก่อนเพื่อเตรียมสไลด์ขึ้นมา
             rectTransform.anchoredPosition = startAnchoredPosition;
-
-            // รีเซ็ตมุมกลับไปตรงๆ
             rectTransform.localRotation = Quaternion.identity;
+            rectTransform.localScale = initialScale;
+        }
+    }
+
+    public void StartSlamZoomEffect()
+    {
+        isSliding = false;
+        isSlamming = true;
+        slamProgress = 0f; // รีเซ็ตตัวคูณแอนิเมชันให้เริ่มนับใหม่ทุกครั้งที่สลับตัวเลข
+
+        if (rectTransform != null)
+        {
+            rectTransform.anchoredPosition = targetAnchoredPosition;
+            rectTransform.localScale = initialScale * startZoomScale;
+            rectTransform.localRotation = Quaternion.Euler(0f, 0f, startSlamAngle);
         }
     }
 
@@ -65,22 +78,34 @@ public class Sc2_UINotifWiggle : MonoBehaviour
     {
         if (rectTransform == null) return;
 
-        // 🚀 1. ลอจิกค่อยๆ เลื่อนเด้งขึ้นมาจากข้างล่าง (Slide Up)
-        if (slideProgress < 1f)
+        // ลอจิกระบบกระแทกหน้าจอ (Slam Zoom)
+        if (isSlamming && slamProgress < 1f)
         {
-            slideProgress += Time.deltaTime * slideSpeed;
+            slamProgress += Time.deltaTime * slamSpeed;
+            float smoothT = Mathf.SmoothStep(0f, 1f, slamProgress);
+            rectTransform.localScale = Vector3.Lerp(initialScale * startZoomScale, initialScale, smoothT);
+            rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Lerp(startSlamAngle, 0f, smoothT));
 
-            // ใช้ Mathf.SmoothStep เพื่อให้ตอนเริ่มเลื่อนจะเร็ว และตอนจะถึงเป้าหมายจะค่อยๆ ชะลอความเร็วลงอย่างนุ่มนวล
-            float smoothT = Mathf.SmoothStep(0f, 1f, slideProgress);
-            rectTransform.anchoredPosition = Vector2.Lerp(startAnchoredPosition, targetAnchoredPosition, smoothT);
+            if (slamProgress >= 1f) isSlamming = false;
+            return;
         }
 
-        // 📐 2. ลอจิกการหมุนเอียงซ้ายขวาช้าๆ (Sine Wave)
+        // ลอจิกระบบสไลด์ขึ้นจากข้างล่าง (Slide Up)
+        if (isSliding && slideProgress < 1f)
+        {
+            slideProgress += Time.deltaTime * slideSpeed;
+            float smoothT = Mathf.SmoothStep(0f, 1f, slideProgress);
+            rectTransform.anchoredPosition = Vector2.Lerp(startAnchoredPosition, targetAnchoredPosition, smoothT);
+
+            if (slideProgress >= 1f) isSliding = false;
+            return;
+        }
+
+        // ระบบลูปดุ๊กดิ๊กแกว่งตัวนุ่มๆ และหายใจพองยุบ (ทำงานปกติเมื่อเอฟเฟกต์เปิดตัวจบลงแล้ว)
         float time = Time.time * rotateSpeed + randomOffset;
         float zRotation = Mathf.Sin(time) * maxRotateAngle;
         rectTransform.localRotation = Quaternion.Euler(0f, 0f, zRotation);
 
-        // 🎈 3. ลอจิกการยืดหดเอฟเฟกต์หายใจ (ถ้าเปิดใช้งาน)
         if (usePulseEffect)
         {
             float pulseTime = Time.time * pulseSpeed + randomOffset;

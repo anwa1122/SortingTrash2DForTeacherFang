@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class LB_Manager : MonoBehaviour
 {
@@ -9,59 +10,16 @@ public class LB_Manager : MonoBehaviour
     public Transform contentParent;
     public GameObject leaderboardPrefab;
 
-    private const string SAVE_KEY = "LocalGameLeaderboard_V2"; // เปลี่ยนคีย์เซฟเพื่อป้องกันข้อมูลสับสนกับตัวเก่า
+    private const string SAVE_KEY = "LocalGameLeaderboard_V2";
 
     void Start()
     {
-        CheckAndSaveRecentPlay();
+        // 💡 โค้ดหลอกระบบ: แอดคะแนนจำลองเข้าไปเทส 3 คน (เซ็ตเสร็จแล้วลบออกได้ครั
+        // สั่งโหลดมาเสกตามปกติ
         GenerateLeaderboardUI();
     }
 
-    private void CheckAndSaveRecentPlay()
-    {
-        if (Sc3_SummaryManager.Instance != null && !string.IsNullOrEmpty(Sc3_SummaryManager.Instance.finalPlayerName))
-        {
-            string newName = Sc3_SummaryManager.Instance.finalPlayerName;
-            int newScore = Sc3_SummaryManager.Instance.finalScore;
-
-            // 🎒 ดึงข้อมูลจำนวนขยะคงเหลือล่าสุดที่ข้ามซีนมา
-            int newTrashCount = 0;
-            if (Sc2_InventoryManager.Instance != null)
-            {
-                newTrashCount = Sc2_InventoryManager.Instance.items.Count;
-            }
-
-            // บันทึกข้อมูลทั้งหมดลงเครื่อง
-            SaveScoreToDevice(newName, newScore, newTrashCount);
-
-            // 🔥 ล้างข้อมูลผู้เล่นเก่าออกเพื่อความท้าทายในรอบถัดไป
-            if (Sc2_InventoryManager.Instance != null)
-            {
-                Sc2_InventoryManager.Instance.items.Clear();
-            }
-            if (GameManager.Instance != null)
-            {
-                GameManager.Instance.playerName = "";
-            }
-        }
-    }
-
-    private void SaveScoreToDevice(string name, int score, int trashCount)
-    {
-        LeaderboardData currentData = LoadLeaderboardData();
-
-        // เพิ่มข้อมูลคนล่าสุดที่มีค่าขยะเข้าไปด้วย
-        currentData.list.Add(new LeaderboardEntry(name, score, trashCount));
-
-        // เรียงลำดับจากคะแนนมากไปน้อย และดึงเอาแค่ Top 10
-        currentData.list = currentData.list.OrderByDescending(x => x.score).Take(10).ToList();
-
-        string json = JsonUtility.ToJson(currentData);
-        PlayerPrefs.SetString(SAVE_KEY, json);
-        PlayerPrefs.Save();
-    }
-
-    private void GenerateLeaderboardUI()
+    public void GenerateLeaderboardUI()
     {
         foreach (Transform child in contentParent) Destroy(child.gameObject);
 
@@ -75,12 +33,24 @@ public class LB_Manager : MonoBehaviour
             LB_Row rowScript = rowObj.GetComponent<LB_Row>();
             if (rowScript != null)
             {
-                // 🔥 ส่งข้อมูลไปเซ็ตที่หน้าจอรวมถึงค่าขยะด้วย
                 rowScript.SetRowData(currentRank, entry.playerName, entry.score, entry.trashCount);
             }
 
             currentRank++;
         }
+    }
+
+    public static void SaveScoreToDevice(string name, int score, int trashCount)
+    {
+        string json = PlayerPrefs.GetString(SAVE_KEY, "");
+        LeaderboardData currentData = string.IsNullOrEmpty(json) ? new LeaderboardData() : JsonUtility.FromJson<LeaderboardData>(json);
+
+        currentData.list.Add(new LeaderboardEntry(name, score, trashCount));
+        currentData.list = currentData.list.OrderByDescending(x => x.score).Take(10).ToList();
+
+        string updateJson = JsonUtility.ToJson(currentData);
+        PlayerPrefs.SetString(SAVE_KEY, updateJson);
+        PlayerPrefs.Save();
     }
 
     private LeaderboardData LoadLeaderboardData()
@@ -94,17 +64,40 @@ public class LB_Manager : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenuScene");
     }
+
+    [ContextMenu("Clear All Leaderboard Data")]
+    public void ClearLeaderboardPrefs()
+    {
+        PlayerPrefs.DeleteKey(SAVE_KEY);
+        Debug.Log("ล้างค่า Leaderboard เก่าในเครื่องเกลี้ยงแล้ว!");
+    }
+
+    // ฟังก์ชันสำหรับผูกกับปุ่มบนหน้าจอ UI เพื่อสั่งล้างตารางคะแนนตอนเล่นเกมจริง
+    public void OnClickResetLeaderboard()
+    {
+        // 1. สั่งลบข้อมูลคีย์เซฟตารางคะแนนออกจากเครื่องถาวร
+        PlayerPrefs.DeleteKey(SAVE_KEY);
+        PlayerPrefs.Save();
+
+        // 2. สั่งรันคำสั่งเสกหน้าจอใหม่ทันที เพื่อเคลียร์แถวตารางเก่าบนหน้าจอให้โล่ง
+        GenerateLeaderboardUI();
+
+        Debug.Log("ล้างตารางคะแนนสำเร็จแล้ว!");
+    }
+
+    public void OnClickBackToMenu()
+    {
+        LoadingScreen.LoadSceneWithLoadingScreen("Sc1_MenuGame");
+    }
 }
 
-// ----------------------------------------------------
-// โครงสร้างข้อมูลที่อัปเดตให้รองรับการเซฟจำนวนขยะ
-// ----------------------------------------------------
+// 🔥 เติมก้อนโครงสร้างข้อมูลนี้กลับเข้ามาข้างล่างไฟล์ (ห้ามลืมเด็ดขาด) 🔥
 [System.Serializable]
 public class LeaderboardEntry
 {
     public string playerName;
     public int score;
-    public int trashCount; // 🔥 เพิ่มตัวแปรเก็บขยะลงระบบ JSON
+    public int trashCount;
 
     public LeaderboardEntry(string n, int s, int t)
     {

@@ -12,12 +12,17 @@ public class MenuManager : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(nameInput.text))
         {
-            SceneManager.LoadScene("ScD_Loading");
+            LoadingScreen.LoadSceneWithLoadingScreen("Sc2_GettingTrash");
         }
         else
         {
             Debug.Log("Please enter your name");
         }
 
+    }
+
+    public void SeeLeaderBoard()
+    {
+        LoadingScreen.LoadSceneWithLoadingScreen("ScL_Leaderboard");
     }
 }

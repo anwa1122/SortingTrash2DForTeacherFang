@@ -36,12 +36,20 @@ public class Sc3_SummaryManager : MonoBehaviour
     }
 
     // 🔥 ฟังก์ชันที่คุณเอาไว้ผูกกับปุ่ม "ดู Leaderboard" หรือ "ไปต่อ" ในหน้าต่างสรุปผล
-    public void OnClickGoToLeaderboard()
+    public void UpdateLeaderboard()
     {
-        Debug.Log($"[Leaderboard] กำลังส่งชื่อ: {finalPlayerName} และ คะแนน: {finalScore} ไปจัดอันดับ...");
+        // 1. ดึงข้อมูลขึ้นมาเตรียมไว้ (finalPlayerName และ finalScore ต้องถูกอัปเดตค่ามาจากตัวเกมน้า)
+        string pName = !string.IsNullOrEmpty(finalPlayerName) ? finalPlayerName : "Guest";
+        int pScore = finalScore;
 
-        // 🛠️ จุดนี้แหละที่คุณจะเอาไปเขียนต่อตอนทำ Leaderboard เช่น:
-        // LeaderboardManager.Instance.SubmitScore(finalPlayerName, finalScore);
-        // หรือ SceneManager.LoadScene("LeaderboardScene");
+        // ดึงจำนวนขยะจากกระเป๋า (ถ้าสคริปต์ Inventory ของคุณเก็บใน List ตัวนี้)
+        int pTrash = (Sc2_InventoryManager.Instance != null) ? Sc2_InventoryManager.Instance.items.Count : 0;
+
+        // 2. ยิงคำสั่งเซฟลงเครื่องข้ามซีนด้วยฟังก์ชัน static ตัวใหม่ที่เราเพิ่งเขียนกันเมื่อกี้
+        LB_Manager.SaveScoreToDevice(pName, pScore, pTrash);
+
+        // 3. ล้างขยะในกระเป๋าและล้างชื่อออก เพื่อให้คนถัดไปมาเล่นแล้วเริ่มจากศูนย์
+        if (Sc2_InventoryManager.Instance != null) Sc2_InventoryManager.Instance.items.Clear();
+        if (GameManager.Instance != null) GameManager.Instance.playerName = "";
     }
 }

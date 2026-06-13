@@ -5,9 +5,11 @@ using System.Collections;
 
 public class Sc3_SortingGameController : MonoBehaviour
 {
+    [Header("Ui setting")]
     public GameObject trashPrefab;      // UI Prefab ขยะที่มีสคริปต์ Sc3_Dragable และ Image Component
     public Transform itemFather;         // พื้นที่สำหรับวางขยะตอนเริ่มเกม
     public RectTransform spawnArea;      // ขอบเขตที่จะใช้สุ่มพิกัดขยะ
+    public Button confirmBtn;
 
     [Header("ใส่ถังขยะ UI ทั้งหมดในฉาก")]
     public List<Sc3_TrashSlot> trashSlots;
@@ -70,6 +72,10 @@ public class Sc3_SortingGameController : MonoBehaviour
             Sc3_NotificationUI.Instance.ShowNotice("There are some left");
             return;
         }
+
+        confirmBtn.interactable = false;
+
+
         finalScore = 0;
         int correctCount = 0;
         int wrongCount = 0;
@@ -110,7 +116,7 @@ public class Sc3_SortingGameController : MonoBehaviour
         // ⏳ สั่งให้หยุดรอตรงนี้เป็นเวลา 1 วินาที
         yield return new WaitForSeconds(1f);
 
-        // เมื่อครบ 1 วินาทีแล้ว ค่อยสั่งให้หน้าต่างสรุปผลเด้งซูมขึ้นมา!
-        Sc3_SummaryManager.Instance.UpdateAndShowSummary(finalScore);
+        Sc3_CompleteTheGame.Instance.RunCompleteGame(finalScore);
+        //Sc3_SummaryManager.Instance.UpdateAndShowSummary(finalScore);
     }
 }

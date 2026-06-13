@@ -8,16 +8,28 @@ public class LoadingScreen : MonoBehaviour
 {
     [Header("UI Components")]
     public TMP_Text progressText;
-    public Image heartImage;        // สำหรับใส่รูปหัวใจ UI
-    public Sprite[] heartSprites;   // สำหรับใส่รูปหัวใจ 11 รูป (0% - 100%)
+    public Image heartImage;
+    public Sprite[] heartSprites;
 
     [Header("Loading Settings")]
     [Tooltip("เวลาขั้นต่ำที่ใช้ในการโหลดฉาก (วินาที) ยิ่งน้อยยิ่งโหลดเสร็จไว")]
-    public float minLoadTime = 3f;  // ← สามารถปรับเปลี่ยนค่าเริ่มต้นตรงนี้ หรือไปปรับใน Unity Inspector ก็ได้
+    public float minLoadTime = 3f;
+
+    // 🌟 ตัวแปร Static ระดับโลกสำหรับฝากชื่อซีนปลายทางเอาไว้
+    // ตั้งค่าเริ่มต้นไว้ที่ฉากเมนูเผื่อกันบั๊กเปิดฉากพลาด
+    public static string TargetSceneName = "MainMenuScene";
+
+    // 🌟 ฟังก์ชันทางลัด (Static) สำหรับให้สคริปต์อื่นเรียกใช้เพื่อสั่งเปลี่ยนฉากผ่านสคริปต์นี้ได้ทันที
+    public static void LoadSceneWithLoadingScreen(string sceneToOpen)
+    {
+        TargetSceneName = sceneToOpen;                  // 1. ฝากชื่อซีนที่จะไป
+        SceneManager.LoadScene("ScD_Loading");          // 2. เปิดตัวหน้าต่างโหลดซีน (🚨 เช็คชื่อซีนให้ตรงกับใน Build Settings น้า)
+    }
 
     void Start()
     {
-        StartCoroutine(LoadAsync("Sc2_GettingTrash"));
+        // 🚀 เปลี่ยนจากเดิมที่ฟิกซ์ชื่อตายตัว มาดึงจากตัวแปรสากลที่เราฝากเอาไว้แทนแล้วครับ!
+        StartCoroutine(LoadAsync(TargetSceneName));
     }
 
     IEnumerator LoadAsync(string sceneName)
@@ -32,23 +44,17 @@ public class LoadingScreen : MonoBehaviour
         {
             elapsed += Time.deltaTime;
 
-            // คำนวณความคืบหน้าจริงของการโหลด (Unity จะหยุดที่ 0.9 เมื่อโหลดเสร็จแต่ยังไม่ได้เปิดฉาก)
             float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
-
-            // ให้เปอร์เซ็นต์ค่อยๆ วิ่งตามความเร็วที่กำหนดใน minLoadTime
             fakeProgress = Mathf.MoveTowards(fakeProgress, realProgress, Time.deltaTime / minLoadTime);
 
-            // เปลี่ยนรูปหัวใจตามช่วงเปอร์เซ็นต์ (0 - 10)
             int index = Mathf.Clamp(Mathf.RoundToInt(fakeProgress * 10), 0, 10);
             if (heartSprites != null && heartSprites.Length > index)
             {
                 heartImage.sprite = heartSprites[index];
             }
 
-            // แสดงตัวเลขเปอร์เซ็นต์ 0% - 100%
             progressText.text = "Loading... " + (int)(fakeProgress * 100) + "%";
 
-            // ถ้าโหลดตัวฉากจริงเสร็จแล้ว (>= 0.9) และเวลาจำลองผ่านไปจนครบกำหนดแล้ว
             if (operation.progress >= 0.9f && elapsed >= minLoadTime && fakeProgress >= 1f)
             {
                 operation.allowSceneActivation = true;

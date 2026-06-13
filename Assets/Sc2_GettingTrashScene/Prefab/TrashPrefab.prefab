@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6731058557950554944}
   - component: {fileID: 586457782359941516}
+  - component: {fileID: -1662419879854637888}
   - component: {fileID: 6961405005115718488}
   - component: {fileID: -7742400022555434218}
   m_Layer: 0
@@ -93,6 +94,23 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &-1662419879854637888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1487048069863646667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72aaed3987acc044c86495778486b799, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sc2_FloatEffect
+  floatSpeed: 2
+  floatAmplitude: 0.15
+  useRotateEffect: 1
+  rotateSpeed: 1.5
+  maxRotateAngle: 8
 --- !u!114 &6961405005115718488
 MonoBehaviour:
   m_ObjectHideFlags: 0

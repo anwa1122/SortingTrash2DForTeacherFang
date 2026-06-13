@@ -170,6 +170,8 @@ public class Sc2_CountdownTimer : MonoBehaviour
     IEnumerator WaitAndTeleport()
     {
         yield return new WaitForSeconds(delayBeforeTeleport);
-        LoadingScreen.LoadSceneWithLoadingScreen("Sc3_SortingTrash");
+        // สั่งผ่านระบบใหม่ ม่านขาวจะสไลด์ปิดตาก่อนวาร์ปทันที นุ่มนวลน่ารักชัวร์!
+        Sc2_SceneTransition.Instance.ChangeScene("Sc3_SortingTrash");
+        //LoadingScreen.LoadSceneWithLoadingScreen("Sc3_SortingTrash");
     }
 }

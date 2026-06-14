@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4022230854153773549}
   - component: {fileID: -8366359353565095001}
   - component: {fileID: -4657946313096523445}
+  - component: {fileID: -3778148904051392450}
   m_Layer: 5
   m_Name: TrashUiPrefab
   m_TagString: Untagged
@@ -102,3 +103,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc3_Dragable
   data: {fileID: 0}
+  normalAlpha: 1
+  hoverAlpha: 0.8
+  dragAlpha: 0.6
+--- !u!114 &-3778148904051392450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6199310921868674898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87e5850984afef940b00288f60411939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sc3_UIFloatingEffect
+  speed: 1
+  range: {x: 20, y: 20}
+  randomizePerInstance: 1
+  speedVariance: 0.2
+  fadeInDuration: 0.3

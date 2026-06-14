@@ -7,56 +7,76 @@ public class Sc3_Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 {
     public Sc2_TrashData data;
 
+    [Header("Alpha Settings")]
+    public float normalAlpha = 1f;   // อัลฟ่าปกติ
+    public float hoverAlpha = 0.8f;  // อัลฟ่าตอนเมาส์เล็งเฉยๆ (ไม่ได้ลาก)
+    public float dragAlpha = 0.6f;   // อัลฟ่าตอนกำลังลาก
+
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Canvas canvas;
 
+    // อ้างอิงสคริปต์ลอย (ถ้าไม่มีติดอยู่บน object นี้ก็จะเป็น null และข้ามการทำงานส่วนนี้ไป)
+    private Sc3_UIFloatingEffect floatingEffect;
+
     private Vector3 originalPosition;
     private Transform startParent;
 
-    // เก็บสถานะว่ากำลังถูกลากอยู่หรือไม่ เพื่อไม่ให้ค่า alpha ตีกัน
     private bool isDragging = false;
+    private bool isPointerOver = false; // เก็บสถานะว่าเมาส์อยู่บนวัตถุไหม
+
+    // --- Flag กลาง บอกว่ามีการลากเกิดขึ้นอยู่หรือไม่ (ใช้ให้สคริปต์อื่นเช็คได้) ---
+    public static bool IsDragging = false;
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = GetComponentInParent<Canvas>();
+        floatingEffect = GetComponent<Sc3_UIFloatingEffect>();
     }
 
     private void Start()
     {
         startParent = transform.parent;
         originalPosition = rectTransform.localPosition;
+        canvasGroup.alpha = normalAlpha;
     }
 
-    // --- ส่วนที่เพิ่มเข้ามาใหม่ ---
-
+    // --- ส่วนเพิ่ม: เช็คเมาส์เล็ง ---
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isDragging) // ถ้าไม่ได้ลากอยู่
+        isPointerOver = true;
+
+        // ถ้าแค่เล็งเฉยๆ (ไม่ได้กำลังลากตัวนี้) ให้มืดลง
+        if (!isDragging)
         {
-            canvasGroup.alpha = 0.6f;
-            // ย่อขนาดลงเหลือ 90%
-            transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+            canvasGroup.alpha = hoverAlpha;
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isDragging) // ถ้าไม่ได้ลากอยู่
+        isPointerOver = false;
+
+        // เลิกเล็งแล้ว และไม่ได้กำลังลาก ให้คืนค่าอัลฟ่าปกติ
+        if (!isDragging)
         {
-            canvasGroup.alpha = 1f;
-            // คืนค่าขนาดปกติ
-            transform.localScale = Vector3.one;
+            canvasGroup.alpha = normalAlpha;
         }
     }
 
-    // --- ส่วนเดิม ---
-
     public void OnBeginDrag(PointerEventData eventData)
     {
-        isDragging = true; // ล็อกสถานะ
+        isDragging = true; // เริ่มลาก
+        IsDragging = true; // บอกทุกสคริปต์ว่ามีการลากเกิดขึ้น
+
+        // หยุดเอฟเฟกต์ลอยชั่วคราว ไม่ให้แย่งเซ็ตตำแหน่งระหว่างลาก
+        // (ไม่งั้นตัว object จะลอยเหลื่อมไม่ตรงกับตำแหน่งเมาส์)
+        if (floatingEffect != null)
+        {
+            floatingEffect.PauseFloating();
+        }
 
         if (transform.parent != startParent)
         {
@@ -70,8 +90,10 @@ public class Sc3_Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         }
 
         transform.SetAsLastSibling();
+
         canvasGroup.blocksRaycasts = false;
-        canvasGroup.alpha = 0.6f;
+        // มืดลงตอนลาก
+        canvasGroup.alpha = dragAlpha;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -81,29 +103,43 @@ public class Sc3_Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        isDragging = false; // ปลดล็อกสถานะ
+        isDragging = false; // จบการลาก
+        IsDragging = false; // แจ้งทุกสคริปต์ว่าหยุดลากแล้ว
+
         canvasGroup.blocksRaycasts = true;
-        canvasGroup.alpha = 1f;
+
+        // คืนค่า Alpha: ถ้าเมาส์ยังเล็งอยู่ ให้เป็น hoverAlpha ไม่งั้นปกติ
+        canvasGroup.alpha = isPointerOver ? hoverAlpha : normalAlpha;
 
         if (transform.parent == startParent)
         {
             rectTransform.localPosition = ClampToSpawnArea(rectTransform.localPosition);
+
+            // ยังอยู่ในพื้นที่เกิด -> ให้ลอยต่อจากตำแหน่งที่ปล่อยจริง (ไม่เด้งกลับจุดเกิดเดิม)
+            if (floatingEffect != null)
+            {
+                floatingEffect.ResumeFloating(rectTransform.anchoredPosition);
+            }
         }
         else
         {
             Vector2 localPoint;
             RectTransform currentParentRect = transform.parent.GetComponent<RectTransform>();
-
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(currentParentRect, eventData.position, eventData.pressEventCamera, out localPoint))
             {
                 rectTransform.anchoredPosition = localPoint;
+            }
+
+            // ถูกวางลง slot แล้ว -> หยุดลอย ให้อยู่นิ่งตรงนั้น
+            if (floatingEffect != null)
+            {
+                floatingEffect.PauseFloating();
             }
         }
     }
 
     private Vector3 ClampToSpawnArea(Vector3 targetPos)
     {
-        // ... โค้ดเดิมของคุณ (ไม่ต้องแก้ไข)
         if (startParent != null)
         {
             RectTransform areaRect = startParent.GetComponent<RectTransform>();
@@ -115,9 +151,7 @@ public class Sc3_Dragable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 float maxX = areaRect.rect.width / 2f - paddingX;
                 float minY = -areaRect.rect.height / 2f + paddingY;
                 float maxY = areaRect.rect.height / 2f - paddingY;
-                float clampedX = Mathf.Clamp(targetPos.x, minX, maxX);
-                float clampedY = Mathf.Clamp(targetPos.y, minY, maxY);
-                return new Vector3(clampedX, clampedY, 0);
+                return new Vector3(Mathf.Clamp(targetPos.x, minX, maxX), Mathf.Clamp(targetPos.y, minY, maxY), 0);
             }
         }
         return targetPos;

@@ -344,7 +344,9 @@ GameObject:
   - component: {fileID: 57467063}
   - component: {fileID: 57467065}
   - component: {fileID: 57467064}
+  - component: {fileID: 57467068}
   - component: {fileID: 57467066}
+  - component: {fileID: 57467067}
   m_Layer: 5
   m_Name: Slot2
   m_TagString: Untagged
@@ -422,6 +424,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc3_TrashSlot
   slotType: 1
+--- !u!225 &57467067
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57467062}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &57467068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57467062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03489c4c058e2924e81b719c990008e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverAlphaEffect
+  normalAlpha: 1
+  hoverAlpha: 0.6
 --- !u!1 &80281331
 GameObject:
   m_ObjectHideFlags: 0
@@ -878,7 +906,9 @@ GameObject:
   - component: {fileID: 499981246}
   - component: {fileID: 499981248}
   - component: {fileID: 499981247}
+  - component: {fileID: 499981251}
   - component: {fileID: 499981249}
+  - component: {fileID: 499981250}
   m_Layer: 5
   m_Name: Slot1
   m_TagString: Untagged
@@ -956,6 +986,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc3_TrashSlot
   slotType: 0
+--- !u!225 &499981250
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499981245}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &499981251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499981245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03489c4c058e2924e81b719c990008e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverAlphaEffect
+  normalAlpha: 1
+  hoverAlpha: 0.6
 --- !u!1 &545244132
 GameObject:
   m_ObjectHideFlags: 0
@@ -2533,7 +2589,9 @@ GameObject:
   - component: {fileID: 1733258189}
   - component: {fileID: 1733258191}
   - component: {fileID: 1733258190}
+  - component: {fileID: 1733258194}
   - component: {fileID: 1733258192}
+  - component: {fileID: 1733258193}
   m_Layer: 5
   m_Name: Slot4
   m_TagString: Untagged
@@ -2611,6 +2669,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc3_TrashSlot
   slotType: 3
+--- !u!225 &1733258193
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733258188}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &1733258194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733258188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03489c4c058e2924e81b719c990008e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverAlphaEffect
+  normalAlpha: 1
+  hoverAlpha: 0.6
 --- !u!1 &1755235378
 GameObject:
   m_ObjectHideFlags: 0
@@ -2645,8 +2729,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -518.7, y: -9.5}
-  m_SizeDelta: {x: 169.2112, y: 165.3861}
+  m_AnchoredPosition: {x: -551.8349, y: -2.9734}
+  m_SizeDelta: {x: 235.481, y: 361.1832}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1755235380
 MonoBehaviour:
@@ -3102,7 +3186,9 @@ GameObject:
   - component: {fileID: 2021621347}
   - component: {fileID: 2021621349}
   - component: {fileID: 2021621348}
+  - component: {fileID: 2021621352}
   - component: {fileID: 2021621350}
+  - component: {fileID: 2021621351}
   m_Layer: 5
   m_Name: Slot3
   m_TagString: Untagged
@@ -3180,6 +3266,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sc3_TrashSlot
   slotType: 2
+--- !u!225 &2021621351
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021621346}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &2021621352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021621346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03489c4c058e2924e81b719c990008e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverAlphaEffect
+  normalAlpha: 1
+  hoverAlpha: 0.6
 --- !u!1 &2072207901
 GameObject:
   m_ObjectHideFlags: 0

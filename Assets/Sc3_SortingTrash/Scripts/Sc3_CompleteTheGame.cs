@@ -20,6 +20,14 @@ public class Sc3_CompleteTheGame : MonoBehaviour
     {
         // ⏳ สั่งให้หยุดรอตรงนี้เป็นเวลา 1 วินาที
         yield return new WaitForSeconds(3f);
-        SceneManager.LoadScene("ScL_Leaderboard");
+        if (Sc2_SceneTransition.Instance != null)
+        {
+            Sc2_SceneTransition.Instance.ChangeScene("ScL_Leaderboard");
+        }
+        else
+        {
+            // แฟลชเซฟกรณีลืมวางสคริปต์ทรานซิชันในซีน ให้วาร์ปแบบปกติแทนกันเกมค้าง
+            LoadingScreen.LoadSceneWithLoadingScreen("ScL_Leaderboard"); //
+        }
     }
-}
+}//ScL_Leaderboard

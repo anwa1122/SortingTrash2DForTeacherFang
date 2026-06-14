@@ -118,13 +118,23 @@ public class Sc2_PlayerManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Trash")) currentTrash = other.gameObject;
+        if (other.CompareTag("Trash"))
+        {
+            Sc2_InteractPopup.Instance.ShowPopup();
+            currentTrash = other.gameObject;
+        }
         if (other.CompareTag("Teleporter")) canTeleport = true;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Trash")) currentTrash = null;
+        if (other.CompareTag("Trash"))
+        {
+            Sc2_InteractPopup.Instance.HidePopup();
+            currentTrash = null;
+        }
         if (other.CompareTag("Teleporter")) canTeleport = false;
     }
+
+
 }

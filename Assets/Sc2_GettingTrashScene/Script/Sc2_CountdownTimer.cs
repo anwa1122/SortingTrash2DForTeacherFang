@@ -169,9 +169,18 @@ public class Sc2_CountdownTimer : MonoBehaviour
 
     IEnumerator WaitAndTeleport()
     {
-        yield return new WaitForSeconds(delayBeforeTeleport);
-        // สั่งผ่านระบบใหม่ ม่านขาวจะสไลด์ปิดตาก่อนวาร์ปทันที นุ่มนวลน่ารักชัวร์!
-        Sc2_SceneTransition.Instance.ChangeScene("Sc3_SortingTrash");
-        //LoadingScreen.LoadSceneWithLoadingScreen("Sc3_SortingTrash");
+        yield return new WaitForSeconds(delayBeforeTeleport); // โชว์ Time Up! ค้างไว้ก่อน
+
+        // 🔥 [แก้ไขจุดนี้]: สั่งให้เล่น Transition ม่านขาวสไลด์มาบังจอก่อน
+        // โดยพ่นชื่อซีนปลายทางจริงๆ ("Sc3_SortingTrash") ลงไปในช่องได้เลยครับ!
+        if (Sc2_SceneTransition.Instance != null)
+        {
+            Sc2_SceneTransition.Instance.ChangeScene("Sc3_SortingTrash");
+        }
+        else
+        {
+            // แฟลชเซฟกรณีลืมวางสคริปต์ทรานซิชันในซีน ให้วาร์ปแบบปกติแทนกันเกมค้าง
+            LoadingScreen.LoadSceneWithLoadingScreen("Sc3_SortingTrash"); //
+        }
     }
 }

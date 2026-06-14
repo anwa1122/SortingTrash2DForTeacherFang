@@ -87,9 +87,17 @@ public class LB_Manager : MonoBehaviour
 
     public void OnClickBackToMenu()
     {
-        LoadingScreen.LoadSceneWithLoadingScreen("Sc1_MenuGame");
+        if (Sc2_SceneTransition.Instance != null)
+        {
+            Sc2_SceneTransition.Instance.ChangeScene("Sc1_MenuGame");
+        }
+        else
+        {
+            // แฟลชเซฟกรณีลืมวางสคริปต์ทรานซิชันในซีน ให้วาร์ปแบบปกติแทนกันเกมค้าง
+            LoadingScreen.LoadSceneWithLoadingScreen("Sc1_MenuGame"); //
+        }
     }
-}
+}//Sc1_MenuGame
 
 // 🔥 เติมก้อนโครงสร้างข้อมูลนี้กลับเข้ามาข้างล่างไฟล์ (ห้ามลืมเด็ดขาด) 🔥
 [System.Serializable]

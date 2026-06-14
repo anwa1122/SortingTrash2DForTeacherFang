@@ -42,25 +42,34 @@ public class LoadingScreen : MonoBehaviour
 
         while (!operation.isDone)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.deltaTime; //
 
-            float realProgress = Mathf.Clamp01(operation.progress / 0.9f);
-            fakeProgress = Mathf.MoveTowards(fakeProgress, realProgress, Time.deltaTime / minLoadTime);
+            float realProgress = Mathf.Clamp01(operation.progress / 0.9f); //
+            fakeProgress = Mathf.MoveTowards(fakeProgress, realProgress, Time.deltaTime / minLoadTime); //
 
-            int index = Mathf.Clamp(Mathf.RoundToInt(fakeProgress * 10), 0, 10);
-            if (heartSprites != null && heartSprites.Length > index)
+            int index = Mathf.Clamp(Mathf.RoundToInt(fakeProgress * 10), 0, 10); //
+            if (heartSprites != null && heartSprites.Length > index) //
             {
-                heartImage.sprite = heartSprites[index];
+                heartImage.sprite = heartSprites[index]; //
             }
 
-            progressText.text = "Loading... " + (int)(fakeProgress * 100) + "%";
+            progressText.text = "Loading... " + (int)(fakeProgress * 100) + "%"; //
 
+            // 🚨 [แก้ไขจุดนี้]: เมื่อโหลดเสร็จครบถ้วนสมบูรณ์แล้ว
             if (operation.progress >= 0.9f && elapsed >= minLoadTime && fakeProgress >= 1f)
             {
-                operation.allowSceneActivation = true;
+                // ถ้าในฉากโหลดมีสคริปต์ม่านขาววางอยู่ ให้สั่งเล่นแอนิเมชันปิดตาก่อนย้ายซีน!
+                if (Sc2_SceneTransition.Instance != null)
+                {
+                    // 🎬 เล่นแอนิเมชันปิดม่านขาวจนมิดจอในซีนโหลด
+                    yield return StartCoroutine(Sc2_SceneTransition.Instance.FadeOutRoutineBeforeExit());
+                }
+
+                // ม่านขาวบังมิดแล้ว ปล่อยตัวให้สลับเข้าซีนใหม่ได้เลย!
+                operation.allowSceneActivation = true; //
             }
 
-            yield return null;
+            yield return null; //
         }
     }
 }

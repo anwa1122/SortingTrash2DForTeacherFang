@@ -27,9 +27,9 @@ public class Sc3_SummaryManager : MonoBehaviour
         finalScore = score;
 
         // 2. อัปเดตตัวหนังสือลง UI หน้าต่างสรุปผล
-        if (nameText != null) nameText.text = $"Player Name: {finalPlayerName}";
-        if (scoreText != null) scoreText.text = $"Score: {finalScore} points";
-        if (trashCountText != null) trashCountText.text = $"Trash Count: {Sc2_InventoryManager.Instance.trashCount} ";
+        if (nameText != null) nameText.text = $"Player Name  :  {finalPlayerName}";
+        if (scoreText != null) scoreText.text = $"Score  :  {finalScore} points";
+        if (trashCountText != null) trashCountText.text = $"Trash Count  :  {Sc2_InventoryManager.Instance.trashCount} ";
 
         // 3. สั่งสคริปต์ NotificationUI ให้ "ซูมหน้าต่างสรุปผลขึ้นมาโชว์"
         Sc3_NotificationUI.Instance.ShowSummaryWindow();

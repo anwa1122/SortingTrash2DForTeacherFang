@@ -69,7 +69,7 @@ public class Sc3_SortingGameController : MonoBehaviour
     {
         if (itemFather.transform.childCount != 0)
         {
-            Sc3_NotificationUI.Instance.ShowNotice("There are some left");
+            Sc3_NotificationUI.Instance.ShowNotice("Please sort all the trash");
             return;
         }
 

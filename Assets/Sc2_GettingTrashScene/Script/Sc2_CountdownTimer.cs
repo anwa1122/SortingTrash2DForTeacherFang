@@ -18,6 +18,7 @@ public class Sc2_CountdownTimer : MonoBehaviour
     [Header("--- 🎮 New Order Setup (ระบบแยกป้ายทำตามสั่ง) ---")]
     [Tooltip("🔥 ลาก GameObject ป้ายบอกภารกิจมาใส่ช่องนี้ (MissionText)")]
     public GameObject missionTextObject;
+    public float missionShowTime = 3f;
 
     [Tooltip("🔥 ลาก GameObject ป้ายตัวเลขนับถอยหลัง 3 2 1 Go มาใส่ช่องนี้ (MissionNotification)")]
     public GameObject introCountObject;
@@ -98,7 +99,7 @@ public class Sc2_CountdownTimer : MonoBehaviour
         {
             missionTextObject.SetActive(true);
             if (missionTextWiggle != null) missionTextWiggle.StartSlideUpEffect(); // ดีดตัวสไลด์ขึ้นมาโชว์
-            yield return new WaitForSeconds(3.0f); // บังคับแช่ค้าง 3 วินาทีถ้วน
+            yield return new WaitForSeconds(missionShowTime); // บังคับแช่ค้าง 3 วินาทีถ้วน
             missionTextObject.SetActive(false); // ครบเวลาสั่งปิดป้ายภารกิจเคลียร์ทาง
         }
 

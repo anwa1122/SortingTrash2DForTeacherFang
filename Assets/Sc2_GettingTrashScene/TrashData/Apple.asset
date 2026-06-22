@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 74424ec551a284541877aa9aeb206cb5, type: 3}
-  m_Name: Can
+  m_Name: Apple
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
-  trashName: Can
-  trashType: 0
-  score: 10
-  icon: {fileID: -1574844303, guid: 5044c5076b2fde4488c6be0f8a53335b, type: 3}
-  spawnChancePercentage: 52.8
+  trashName: Apple
+  trashType: 2
+  score: 20
+  icon: {fileID: -4476151682571136137, guid: 32725946d1f12134fa44af7d00b005cb, type: 3}
+  spawnChancePercentage: 35.3

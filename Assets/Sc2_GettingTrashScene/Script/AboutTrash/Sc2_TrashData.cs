@@ -4,8 +4,9 @@ public enum TrashType
 {
     Recycle,
     General,
-    Wet,
-    Hazardous
+    Organic,
+    Hazardous,
+    Infectious
 }
 
 [CreateAssetMenu(fileName = "New Trash", menuName = "Trash/Trash Data")]

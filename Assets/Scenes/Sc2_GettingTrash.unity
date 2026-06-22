@@ -13941,6 +13941,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f563e42df6cdee749846640480b19542, type: 2}
   - {fileID: 11400000, guid: bb7f7f1edd135034f8db60287609b937, type: 2}
   - {fileID: 11400000, guid: 16678d640ba863e4b9128d88ccfa06f1, type: 2}
+  - {fileID: 11400000, guid: e81d2aa331b005f47ae6f955f0e66977, type: 2}
+  - {fileID: 11400000, guid: bb7470d0347c7ef4cbf88fd78ba2568d, type: 2}
+  - {fileID: 11400000, guid: fbcb1a8ec09658145a84fdc21a3c69f7, type: 2}
+  - {fileID: 11400000, guid: 2d78d06940a27604c97c6e2ab3cf9e3b, type: 2}
   spawnPointsContainer: {fileID: 1147207763}
 --- !u!4 &1481022939
 Transform:

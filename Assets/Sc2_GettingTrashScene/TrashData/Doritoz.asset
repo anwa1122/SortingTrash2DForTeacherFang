@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
   trashName: Doritoz
   trashType: 1
-  score: 10
+  score: 15
   icon: {fileID: -3100677915030606672, guid: 2f97d7f5a8d946645a11e8e15d04b885, type: 3}
-  spawnChancePercentage: 47.4
+  spawnChancePercentage: 40

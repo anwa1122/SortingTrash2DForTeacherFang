@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Poision
   m_EditorClassIdentifier: Assembly-CSharp::Sc2_TrashData
   trashName: Poision
-  trashType: 3
+  trashType: 4
   score: 25
-  icon: {fileID: 7702450093165170983, guid: 930a3fad72f9da44781e13a655818c8a, type: 3}
-  spawnChancePercentage: 9.8
+  icon: {fileID: -6748677137732289567, guid: 6a4fb1f071201da47aebc68fe6966bbc, type: 3}
+  spawnChancePercentage: 25

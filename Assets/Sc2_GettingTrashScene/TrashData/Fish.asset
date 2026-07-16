@@ -16,4 +16,4 @@ MonoBehaviour:
   trashType: 2
   score: 20
   icon: {fileID: 8966945178157639174, guid: 23bd3c5253841fb49b89ef2ac8e8899a, type: 3}
-  spawnChancePercentage: 25
+  spawnChancePercentage: 35
